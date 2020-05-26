@@ -1,0 +1,82 @@
+<div class="datepicker">
+  <input
+    type="text"
+    readonly
+    placeholder="Select date"
+    phx-click="click_datepicker"
+    phx-target="<%= @myself %>"
+  />
+  <div class="icon">
+    <svg class="h-5 w-5 text-gray-400"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+  </div>
+  <div class="calendar <%= if @state == "closed" do %>hidden<% end %>">
+    <div class="header">
+      <div>
+        <strong><%= full_month_name(@visible_month_year) %></strong>
+        <%= full_year(@visible_month_year) %>
+      </div>
+      <div class="toggles">
+        <button
+          type="button"
+          style="margin-right: 10px;"
+          phx-click="click_prev"
+          phx-target="<%= @myself %>"
+        >
+          Prev
+        </button>
+        <button
+          type="button"
+          phx-click="click_next"
+          phx-target="<%= @myself %>"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
+    <div class="weekdays">
+      <div style="width: 14.2%">
+        <div class="day">S</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">M</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">T</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">W</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">T</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">F</div>
+      </div>
+      <div style="width: 14.26%">
+        <div class="day">S</div>
+      </div>
+    </div>
+
+    <div class="monthdays">
+      <%# Blank cells %>
+      <%= for i <- 1..blank_cells(@visible_month_year) do %>
+        <div style="width: 14.26%" class="day"></div>
+      <% end %>
+
+      <%# Day cells %>
+      <%= for i <- 1..selectable_cells(@visible_month_year) do %>
+        <div style="width: 14.26%" class="day selectable"><%= i %></div>
+      <% end %>
+
+      <%# Days in future %>
+      <%= if unselectable_cells(@visible_month_year) > 0 do %>
+        <%= for i <- Range.new(selectable_cells(@visible_month_year) + 1, unselectable_cells(@visible_month_year)) do %>
+          <div style="width: 14.26%" class="day unselectable"><%= i %></div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
