@@ -7,6 +7,7 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
       |> Map.put_new(:selected_date, nil)
       |> Map.put(:state, "closed")
       |> set_visible_month_year()
+      |> put_next_month_selectable()
 
     {:ok, assign(socket, assigns)}
   end
@@ -27,18 +28,45 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
   defp next_state("open"), do: "closed"
   defp next_state("closed"), do: "open"
 
-  def handle_event("click_next", _, socket) do
-    {:noreply, socket}
-  end
-
   def handle_event("click_prev", _, socket) do
     previous_month = previous_month(socket.assigns.visible_month_year)
-    {:noreply, assign(socket, :visible_month_year, %{previous_month | day: 1})}
+
+    assigns =
+      Map.new()
+      |> Map.put(:visible_month_year, %{previous_month | day: 1})
+      |> put_next_month_selectable()
+
+    {:noreply, assign(socket, assigns)}
   end
 
   def handle_event("click_next", _, socket) do
     next_month = next_month(socket.assigns.visible_month_year)
-    {:noreply, assign(socket, :visible_month_year, %{next_month | day: 1})}
+
+    assigns =
+      case next_month_selectable?(socket.assigns.visible_month_year) do
+        true ->
+          Map.new()
+          |> Map.put(:visible_month_year, %{next_month | day: 1})
+          |> Map.put(:next_month_selectable, next_month_selectable?(next_month))
+        false ->
+          Map.new()
+          |> Map.put(:next_month_selectable, false)
+      end
+
+    {:noreply, assign(socket, assigns)}
+  end
+
+  def handle_event("click_date", %{"date" => date}, socket) do
+    assigns =
+      Map.new()
+      |> Map.put(:state, "closed")
+      |> Map.put(:selected_date, Date.from_iso8601!(date))
+
+    {:noreply, assign(socket, assigns)}
+  end
+
+  defp put_next_month_selectable(%{visible_month_year: d} = assigns) do
+    Map.put(assigns, :next_month_selectable, next_month_selectable?(d))
   end
 
   defp previous_month(%Date{day: day} = date) do
@@ -53,5 +81,10 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
     first_of_next   = Date.add(date, days_this_month - day + 1)
     days_next_month = Date.days_in_month(first_of_next)
     Date.add(first_of_next, min(day, days_next_month) - 1)
+  end
+
+  defp next_month_selectable?(%{month: month, year: year} = date) do
+    today = Date.utc_today()
+    not (month == today.month and year == today.year)
   end
 end

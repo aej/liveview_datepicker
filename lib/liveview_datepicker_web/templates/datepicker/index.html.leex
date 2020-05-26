@@ -5,6 +5,7 @@
     placeholder="Select date"
     phx-click="click_datepicker"
     phx-target="<%= @myself %>"
+    value="<%= humanize_date(@selected_date) %>"
   />
   <div class="icon">
     <svg class="h-5 w-5 text-gray-400"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -27,6 +28,7 @@
           Prev
         </button>
         <button
+          class="<%= unless @next_month_selectable do %>disabled<% end %>"
           type="button"
           phx-click="click_next"
           phx-target="<%= @myself %>"
@@ -68,7 +70,15 @@
 
       <%# Day cells %>
       <%= for i <- 1..selectable_cells(@visible_month_year) do %>
-        <div style="width: 14.26%" class="day selectable"><%= i %></div>
+        <div
+          style="width: 14.26%"
+          class="day selectable"
+          phx-click="click_date"
+          phx-target="<%= @myself %>"
+          phx-value-date="<%= %{@visible_month_year | day: i} %>"
+        >
+          <%= i %>
+        </div>
       <% end %>
 
       <%# Days in future %>

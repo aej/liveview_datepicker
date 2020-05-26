@@ -6,6 +6,9 @@ defmodule LiveviewDatepickerWeb.DatepickerView do
 
   def full_year(date), do: to_string(date.year)
 
+  def humanize_date(nil), do: nil
+  def humanize_date(date), do: Date.to_iso8600(date)
+
   def blank_cells(%Date{day: 1} = date) do
     dow = Date.day_of_week(date)
     case dow do

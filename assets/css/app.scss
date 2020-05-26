@@ -122,6 +122,11 @@
 
         button {
           padding: 0 1.0rem;
+
+          &.disabled {
+            cursor: not-allowed;
+            background-color: #606c76;
+          }
         }
       }
     }
@@ -158,7 +163,7 @@
         }
 
         &.unselectable {
-          color: #888888;
+          color: #bdbdbd;
           cursor: not-allowed;
         }
       }
