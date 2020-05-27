@@ -64,7 +64,7 @@
 
     <div class="monthdays">
       <%# Blank cells %>
-      <%= for i <- 1..blank_cells(@visible_month_year) do %>
+      <%= for _ <- 1..blank_cells(@visible_month_year) do %>
         <div style="width: 14.26%" class="day"></div>
       <% end %>
 

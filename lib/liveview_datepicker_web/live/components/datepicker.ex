@@ -15,7 +15,9 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
   defp set_visible_month_year(%{selected_date: nil} = assigns) do
     Map.put(assigns, :visible_month_year, %{Date.utc_today() | day: 1})
   end
-  defp set_visible_month_year(%{selected_date: d} = assigns), do: Map.put(assigns, :visible_month_year, d)
+
+  defp set_visible_month_year(%{selected_date: d} = assigns),
+    do: Map.put(assigns, :visible_month_year, d)
 
   def render(assigns) do
     LiveviewDatepickerWeb.DatepickerView.render("index.html", assigns)
@@ -48,6 +50,7 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
           Map.new()
           |> Map.put(:visible_month_year, %{next_month | day: 1})
           |> Map.put(:next_month_selectable, next_month_selectable?(next_month))
+
         false ->
           Map.new()
           |> Map.put(:next_month_selectable, false)
@@ -78,7 +81,7 @@ defmodule LiveviewDatepickerWeb.Components.Datepicker do
 
   defp next_month(%Date{day: day} = date) do
     days_this_month = Date.days_in_month(date)
-    first_of_next   = Date.add(date, days_this_month - day + 1)
+    first_of_next = Date.add(date, days_this_month - day + 1)
     days_next_month = Date.days_in_month(first_of_next)
     Date.add(first_of_next, min(day, days_next_month) - 1)
   end
